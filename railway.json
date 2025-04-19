@@ -1,0 +1,14 @@
+{
+  "build": {
+    "env": {
+      "SPRING_DATA_MONGODB_URI": "mongodb://mongo:27017/financeirodb"
+    },
+    "commands": [
+      "mvn clean package -DskipTests"
+    ]
+  },
+  "deploy": {
+    "startCommand": "java -jar target/controle-financeiro-0.0.1-SNAPSHOT.jar",
+    "restartPolicyType": "ON_FAILURE"
+  }
+}
