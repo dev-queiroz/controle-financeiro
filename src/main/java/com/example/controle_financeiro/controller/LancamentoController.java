@@ -2,9 +2,13 @@ package com.example.controle_financeiro.controller;
 
 import com.example.controle_financeiro.dto.LancamentoRequestDTO;
 import com.example.controle_financeiro.dto.LancamentoResponseDTO;
+import com.example.controle_financeiro.service.ExportacaoCSVService;
 import com.example.controle_financeiro.service.LancamentoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,6 +21,9 @@ import java.time.LocalDate;
 public class LancamentoController {
 
     private final LancamentoService service;
+
+    @Autowired
+    private final ExportacaoCSVService exportacaoCSVService;
 
     @PostMapping
     public LancamentoResponseDTO salvar(@RequestBody @Valid LancamentoRequestDTO dto) {
@@ -40,5 +47,13 @@ public class LancamentoController {
         LocalDate dataInicio = LocalDate.parse(inicio);
         LocalDate dataFim = LocalDate.parse(fim);
         return service.listarPorPeriodo(dataInicio, dataFim);
+    }
+
+    @GetMapping(value = "/lancamentos/exportar", produces = "text/csv")
+    public ResponseEntity<String> exportarCSV() {
+        String csv = exportacaoCSVService.gerarCSV();
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=lancamentos.csv")
+                .body(csv);
     }
 }
